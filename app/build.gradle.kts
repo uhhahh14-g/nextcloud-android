@@ -156,8 +156,8 @@ android {
             // used for f-droid
             register("generic") {
                 applicationId = "kr.appserver210.nextcloud"
-                versionNameSuffix = "-appserver210.2"
-                versionCode = 350000291
+                versionNameSuffix = "-appserver210.3"
+                versionCode = 350000292
                 dimension = "default"
             }
 
@@ -537,6 +537,7 @@ dependencies {
 
     // region Google Play dependencies, upon each update first test: new registration, receive push
     add(gplayImplementationConfiguration, libs.bundles.gplay)
+    implementation("org.unifiedpush.android:connector:3.0.10")
     // endregion
 
     // region common

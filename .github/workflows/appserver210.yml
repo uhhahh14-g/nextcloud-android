@@ -27,8 +27,14 @@ jobs:
       - name: Build and test
         run: |
           chmod +x gradlew
+          ./gradlew :app:spotlessKotlinApply
           ./gradlew :app:assembleGenericRelease :app:testGenericDebugUnitTest --tests 'com.nextcloud.client.appserver.*' --stacktrace
           ./gradlew :app:spotlessKotlinCheck :app:lintGenericRelease :app:spotbugsGenericRelease :app:detekt --continue --stacktrace
+      - name: Save formatting patch
+        if: always()
+        run: |
+          mkdir -p dist
+          git diff > dist/formatting.patch
       - name: Sign installation APK
         env:
           SIGNING_P12: ${{ secrets.APPSERVER210_SIGNING_P12 }}

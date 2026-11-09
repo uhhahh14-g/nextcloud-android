@@ -1641,4 +1641,5 @@
     <string name="appserver_meeting">집회준비</string>
     <string name="appserver_research">심층연구</string>
     <string name="appserver_daily">성구</string>
+    <string name="appserver210_daily_push_name">Nextcloud210 – Daily Bible audio</string>
 </resources>

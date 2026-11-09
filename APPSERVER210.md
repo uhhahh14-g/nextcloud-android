@@ -28,18 +28,22 @@ No server app, user data, or authentication policy is changed by this build.
 
 ## Daily Bible audio synchronization
 
-Version appserver210.2 automatically downloads the account's accessible
-`/daily-bible/audio/daily-bible-review.mp3` after the native file screen opens.
-WorkManager checks it hourly while connected, including metered mobile networks.
-Android may defer background work during Doze, battery restrictions, or a force stop;
-this is not an exact-time alarm. Opening the file screen requests a check again.
+Version appserver210.3 uses UnifiedPush with the separately installed ntfy Android distributor.
+Set its default server to https://ntfy.01084949031.kr, sign in with the phone-only
+read credential shown to root in Daily Bible settings, and enable instant delivery.
+Anonymous access is denied; this build does not use Firebase for Daily Bible delivery.
+Opening native files registers the distributor. Server completion publishes a content-free
+ready signal. WorkManager then authenticates with the native Nextcloud account and checks
+the Asia/Seoul date, expected byte length and SHA-256 before replacing local audio.
+Only accounts with access to the original daily-bible audio can register or fetch it.
+The server records a successful device acknowledgement; delivery alone is not a save.
 
-The worker uses the existing account credentials, compares the remote ETag and
-file size, and uses the native download operation and account-specific storage.
-It does not upload local changes, download archives, or modify server files.
-Unchanged audio is not downloaded again; interrupted or failed checks retry with
-exponential backoff starting at 15 minutes. The existing Android account remains
-installed when updating this APK with the same signing key.
+Audio is stored in the native account-specific app storage. No archive is downloaded.
+Hourly network-constrained checks recover missed signals. Android can delay background
+work during Doze or battery restrictions; force-stopped apps must be opened again.
+For the phone, allow background battery use for ntfy and Nextcloud210. Closing the UI
+is supported; force stop, disabled notifications, offline devices and powered-off phones
+cannot be treated as guaranteed immediate delivery. Tasker storage access is separate.
 
 ## Build and signing
 

@@ -1415,6 +1415,7 @@ class FileDisplayActivity :
 
         super.onResume()
         com.nextcloud.client.appserver.DailyBibleSyncScheduler.syncNow(this)
+        com.nextcloud.client.appserver.DailyBiblePush.register(this)
 
         val listFragmentJustCreated = this.listFragmentJustCreated
         this.listFragmentJustCreated = false
