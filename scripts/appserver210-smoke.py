@@ -34,11 +34,11 @@ try:
     record('App starts without a fatal crash', not re.search(r'Process: ' + re.escape(package) + r'(?:,|\s|$)', log))
     record('Native app process remains running', bool(adb('shell', 'pidof', package).stdout.strip()))
     # A fresh emulator has not completed Chrome's first-run flow yet.
-    for attempt in range(15):
+    for attempt in range(30):
         adb('shell', 'uiautomator', 'dump', '/sdcard/window.xml', check=False)
         xml = adb('shell', 'cat', '/sdcard/window.xml', check=False).stdout
         (output / 'login-screen.xml').write_text(xml)
-        if 'nextcloud.01084949031.kr' in xml:
+        if 'nextcloud.01084949031.kr' in xml and ('Log in' in xml or '로그인' in xml or 'Nextcloud' in xml):
             break
         try:
             nodes = ET.fromstring(xml).iter('node')
