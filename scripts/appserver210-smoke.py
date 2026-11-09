@@ -26,7 +26,7 @@ try:
     adb('logcat', '-c')
     install = adb('install', '-r', 'dist/Nextcloud-210.apk')
     record('Signed release APK installs on Android 15', 'Success' in install.stdout)
-    adb('shell', 'am', 'start', '-W', '-n', package + '/com.owncloud.android.ui.activity.FileDisplayActivity')
+    adb('shell', 'am', 'start', '-W', '-n', package + '/com.nmc.android.ui.LauncherActivity')
     time.sleep(25)
     log = adb('logcat', '-b', 'crash', '-d').stdout
     (output / 'crash-log.txt').write_text(log)
