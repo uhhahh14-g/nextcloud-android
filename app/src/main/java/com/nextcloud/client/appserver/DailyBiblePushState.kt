@@ -29,8 +29,8 @@ class DailyBiblePushState(context: Context) {
         fun validEndpoint(endpoint: String): Boolean = runCatching {
             val uri = URI(endpoint)
             uri.scheme == "https" && uri.host == "ntfy.01084949031.kr" && uri.port == -1 &&
-                uri.userInfo == null && uri.query == null && uri.fragment == null &&
-                uri.path.matches(Regex("/up[A-Za-z0-9_-]{20,180}"))
+                uri.userInfo == null && (uri.query == null || uri.query == "up=1") && uri.fragment == null &&
+                uri.path.matches(Regex("/up[A-Za-z0-9_-]{12,62}"))
         }.getOrDefault(false)
     }
 }

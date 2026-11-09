@@ -35,8 +35,9 @@ class DailyAudioManifestTest {
 
     @Test
     fun onlyOwnAuthenticatedPushHostIsAccepted() {
-        val topic = "/up" + "a".repeat(64)
+        val topic = "/up" + "a".repeat(12)
         assertTrue(DailyBiblePushState.validEndpoint("https://ntfy.01084949031.kr" + topic))
+        assertTrue(DailyBiblePushState.validEndpoint("https://ntfy.01084949031.kr" + topic + "?up=1"))
         for (url in listOf(
             "http://ntfy.01084949031.kr" + topic,
             "https://attacker.example" + topic,
