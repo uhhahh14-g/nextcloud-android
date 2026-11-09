@@ -538,6 +538,7 @@ dependencies {
     // region Google Play dependencies, upon each update first test: new registration, receive push
     add(gplayImplementationConfiguration, libs.bundles.gplay)
     implementation("org.unifiedpush.android:connector:3.0.10")
+    implementation("com.google.crypto.tink:tink:1.18.0")
     // endregion
 
     // region common
@@ -552,3 +553,4 @@ dependencies {
     // kotlinx.serialization
     implementation(libs.kotlinx.serialization.json)
 }
+
