@@ -38,6 +38,9 @@ try:
         adb('shell', 'uiautomator', 'dump', '/sdcard/window.xml', check=False)
         xml = adb('shell', 'cat', '/sdcard/window.xml', check=False).stdout
         (output / 'login-screen.xml').write_text(xml)
+        if attempt in (0, 3, 10, 29):
+            frame = subprocess.run(['adb', 'exec-out', 'screencap', '-p'], capture_output=True)
+            (output / ('login-step-' + str(attempt) + '.png')).write_bytes(frame.stdout)
         if 'nextcloud.01084949031.kr' in xml and ('Log in' in xml or '로그인' in xml or 'Nextcloud' in xml):
             break
         try:
@@ -55,6 +58,10 @@ try:
     screenshot = subprocess.run(['adb', 'exec-out', 'screencap', '-p'], capture_output=True, check=True)
     (output / 'login-screen.png').write_bytes(screenshot.stdout)
 finally:
+    diagnostic = adb('logcat', '-d', '-v', 'brief', check=False).stdout
+    diagnostic = '\n'.join(line for line in diagnostic.splitlines() if re.search(r'ERR_|UnknownHost|SSLHandshake|SocketTimeout|net::|Connection refused|timeout', line, re.I))
+    diagnostic = re.sub(r'https?://\S+', '[URL]', diagnostic)
+    (output / 'network-errors.txt').write_text(diagnostic)
     crash = adb('logcat', '-b', 'crash', '-d', check=False).stdout
     (output / 'crash-log.txt').write_text(crash)
     screenshot = subprocess.run(['adb', 'exec-out', 'screencap', '-p'], capture_output=True)
