@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 import json
 import pathlib
+import re
 import subprocess
 import time
 
@@ -27,8 +28,9 @@ try:
     record('Signed release APK installs on Android 15', 'Success' in install.stdout)
     adb('shell', 'am', 'start', '-W', '-n', package + '/com.owncloud.android.ui.activity.FileDisplayActivity')
     time.sleep(25)
-    log = adb('logcat', '-d').stdout
-    record('App starts without a fatal crash', 'FATAL EXCEPTION' not in log or ('Process: ' + package) not in log)
+    log = adb('logcat', '-b', 'crash', '-d').stdout
+    (output / 'crash-log.txt').write_text(log)
+    record('App starts without a fatal crash', not re.search(r'Process: ' + re.escape(package) + r'(?:,|\s|$)', log))
     record('Native app process remains running', bool(adb('shell', 'pidof', package).stdout.strip()))
     adb('shell', 'uiautomator', 'dump', '/sdcard/window.xml', check=False)
     xml = adb('shell', 'cat', '/sdcard/window.xml', check=False).stdout
@@ -36,5 +38,10 @@ try:
     screenshot = subprocess.run(['adb', 'exec-out', 'screencap', '-p'], capture_output=True, check=True)
     (output / 'login-screen.png').write_bytes(screenshot.stdout)
 finally:
+    crash = adb('logcat', '-b', 'crash', '-d', check=False).stdout
+    (output / 'crash-log.txt').write_text(crash)
+    screenshot = subprocess.run(['adb', 'exec-out', 'screencap', '-p'], capture_output=True)
+    if screenshot.returncode == 0:
+        (output / 'login-screen.png').write_bytes(screenshot.stdout)
     (output / 'results.json').write_text(json.dumps(results, indent=2))
     print(json.dumps(results, indent=2))

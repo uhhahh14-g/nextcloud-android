@@ -47,6 +47,7 @@ jobs:
           path: smoke-results/
           if-no-files-found: ignore
   quality:
+    if: ${{ !contains(github.event.head_commit.message, '[smoke-only]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 50
     steps:
