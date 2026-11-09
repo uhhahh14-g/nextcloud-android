@@ -40,12 +40,12 @@ object DailyBibleSyncScheduler {
     }
 
     @JvmStatic
-    fun syncNow(context: Context) {
+    fun syncNow(context: Context, replacePending: Boolean = false) {
         if (context.packageName != PACKAGE_NAME) return
         val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
         WorkManager.getInstance(context).enqueueUniqueWork(
             IMMEDIATE_WORK,
-            ExistingWorkPolicy.KEEP,
+            if (replacePending) ExistingWorkPolicy.REPLACE else ExistingWorkPolicy.KEEP,
             OneTimeWorkRequestBuilder<DailyBibleSyncWork>()
                 .setConstraints(constraints)
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, RETRY_MINUTES, TimeUnit.MINUTES)

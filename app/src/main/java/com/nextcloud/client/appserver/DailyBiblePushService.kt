@@ -21,13 +21,13 @@ class DailyBiblePushService : PushService() {
         }
         state.endpoint = endpoint.url
         state.recordStatus("registered")
-        DailyBibleSyncScheduler.syncNow(this)
+        DailyBibleSyncScheduler.syncNow(this, replacePending = true)
     }
 
     override fun onMessage(message: PushMessage, instance: String) {
         if (instance != DailyBiblePush.INSTANCE) return
         DailyBiblePushState(this).recordStatus("push_received")
-        DailyBibleSyncScheduler.syncNow(this)
+        DailyBibleSyncScheduler.syncNow(this, replacePending = true)
     }
 
     override fun onRegistrationFailed(reason: FailedReason, instance: String) {
