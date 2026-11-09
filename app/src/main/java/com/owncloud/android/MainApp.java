@@ -360,6 +360,7 @@ public class MainApp extends Application implements HasAndroidInjector, NetworkC
             }
 
             backgroundJobManager.startPeriodicallyOfflineOperation();
+            com.nextcloud.client.appserver.DailyBibleSyncScheduler.schedule(this);
         }
 
         registerGlobalPassCodeProtection();

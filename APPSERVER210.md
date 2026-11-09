@@ -26,6 +26,21 @@ accounts, check the web account and sign out of the browser session if necessary
 
 No server app, user data, or authentication policy is changed by this build.
 
+## Daily Bible audio synchronization
+
+Version appserver210.2 automatically downloads the account's accessible
+`/daily-bible/audio/daily-bible-review.mp3` after the native file screen opens.
+WorkManager checks it hourly while connected, including metered mobile networks.
+Android may defer background work during Doze, battery restrictions, or a force stop;
+this is not an exact-time alarm. Opening the file screen requests a check again.
+
+The worker uses the existing account credentials, compares the remote ETag and
+file size, and uses the native download operation and account-specific storage.
+It does not upload local changes, download archives, or modify server files.
+Unchanged audio is not downloaded again; interrupted or failed checks retry with
+exponential backoff starting at 15 minutes. The existing Android account remains
+installed when updating this APK with the same signing key.
+
 ## Build and signing
 
 `.github/workflows/appserver210.yml` builds the Generic release, runs link-policy

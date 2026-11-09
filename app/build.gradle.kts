@@ -156,7 +156,8 @@ android {
             // used for f-droid
             register("generic") {
                 applicationId = "kr.appserver210.nextcloud"
-                versionNameSuffix = "-appserver210.1"
+                versionNameSuffix = "-appserver210.2"
+                versionCode = 350000291
                 dimension = "default"
             }
 

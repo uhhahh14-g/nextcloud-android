@@ -17,6 +17,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import com.nextcloud.client.account.UserAccountManager
+import com.nextcloud.client.appserver.DailyBibleSyncWork
 import com.nextcloud.client.core.Clock
 import com.nextcloud.client.database.NextcloudDatabase
 import com.nextcloud.client.device.PowerManagementService
@@ -97,6 +98,7 @@ class BackgroundJobFactory @Inject constructor(
                 AutoUploadWorker::class -> createAutoUploadWorker(context, workerParameters)
                 AutoUploadRescanWorker::class -> createAutoUploadRescanWorker(context, workerParameters)
                 OfflineSyncWork::class -> createOfflineSyncWork(context, workerParameters)
+                DailyBibleSyncWork::class -> DailyBibleSyncWork(context, workerParameters, accountManager)
                 MediaFoldersDetectionWork::class -> createMediaFoldersDetectionWork(context, workerParameters)
                 NotificationWork::class -> createNotificationWork(context, workerParameters)
                 AccountRemovalWork::class -> createAccountRemovalWork(context, workerParameters)
