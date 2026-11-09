@@ -29,16 +29,17 @@ class DailyBibleSyncWork(
 ) : Worker(context, params) {
     override fun doWork(): Result = synchronized(syncLock) {
         var retry = false
-        accountManager.allUsers.filter { !it.isAnonymous && DailyBibleSyncPolicy.supports(it.server.uri) }.forEach { user ->
-            retry = !syncAudio(user) || retry
-        }
+        accountManager.allUsers
+            .filter { !it.isAnonymous && DailyBibleSyncPolicy.supports(it.server.uri) }
+            .forEach { user -> retry = !syncAudio(user) || retry }
         if (retry) Result.retry() else Result.success()
     }
 
     @Suppress("TooGenericExceptionCaught", "ReturnCount")
     private fun syncAudio(user: User): Boolean {
         return try {
-            val client = OwnCloudClientManagerFactory.getDefaultSingleton().getClientFor(user.toOwnCloudAccount(), context)
+            val client = OwnCloudClientManagerFactory.getDefaultSingleton()
+                .getClientFor(user.toOwnCloudAccount(), context)
             val metadata = ReadFileRemoteOperation(DailyBibleSyncPolicy.AUDIO_PATH).execute(client)
             if (metadata.code == ResultCode.FILE_NOT_FOUND) return true
             if (!metadata.isSuccess) return false
@@ -48,7 +49,10 @@ class DailyBibleSyncWork(
             val local = previous?.storagePath?.let { File(it) }?.takeIf { it.isFile }
             val file = FileStorageUtils.fillOCFile(remote)
             if (file.fileLength <= 0) return false
-            if (!DailyBibleSyncPolicy.needsDownload(local?.length(), file.fileLength, previous?.etag, file.etag)) return true
+            val changed = DailyBibleSyncPolicy.needsDownload(
+                local?.length(), file.fileLength, previous?.etag, file.etag
+            )
+            if (!changed) return true
             if (previous == null) {
                 manager.saveFileWithParent(file, context)
             } else {
