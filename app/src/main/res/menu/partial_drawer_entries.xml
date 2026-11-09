@@ -85,6 +85,15 @@
             android:title="@string/drawer_item_assistant" />
     </group>
 
+    <group android:id="@+id/drawer_menu_app_server" android:checkableBehavior="none">
+        <item android:id="@+id/nav_appserver_meeting" android:orderInCategory="2"
+            android:icon="@drawable/selector_files" android:title="@string/appserver_meeting" />
+        <item android:id="@+id/nav_appserver_research" android:orderInCategory="2"
+            android:icon="@drawable/selector_recently" android:title="@string/appserver_research" />
+        <item android:id="@+id/nav_appserver_daily" android:orderInCategory="2"
+            android:icon="@drawable/selector_favorites" android:title="@string/appserver_daily" />
+    </group>
+
     <!--
      all items in this group MUST have orderInCategory="3" set
    -->

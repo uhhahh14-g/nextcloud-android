@@ -1,0 +1,57 @@
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: App-server 210 APK
+on:
+  push:
+    branches: [appserver210]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: appserver210-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Install Android build tools
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37" "build-tools;37.0.0" "ndk;29.0.14206865" "cmake;4.1.2"
+      - name: Build and test
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleGenericRelease :app:testGenericDebugUnitTest --tests 'com.nextcloud.client.appserver.*' --stacktrace
+      - name: Sign installation APK
+        env:
+          SIGNING_P12: ${{ secrets.APPSERVER210_SIGNING_P12 }}
+          SIGNING_PASSWORD: ${{ secrets.APPSERVER210_SIGNING_PASSWORD }}
+        run: |
+          test -n "$SIGNING_P12"
+          printf '%s' "$SIGNING_P12" | base64 --decode > "$RUNNER_TEMP/appserver210.p12"
+          mkdir -p dist
+          TOOLS="$ANDROID_HOME/build-tools/37.0.0"
+          "$TOOLS/zipalign" -P 16 -f -v 4 app/build/outputs/apk/generic/release/*-unsigned.apk dist/Nextcloud-210.apk
+          "$TOOLS/apksigner" sign --ks "$RUNNER_TEMP/appserver210.p12" --ks-type PKCS12 --ks-key-alias appserver210 --ks-pass env:SIGNING_PASSWORD --key-pass env:SIGNING_PASSWORD dist/Nextcloud-210.apk
+          "$TOOLS/apksigner" verify --verbose --print-certs dist/Nextcloud-210.apk > dist/signature-verification.txt
+          "$TOOLS/aapt" dump badging dist/Nextcloud-210.apk > dist/apk-info.txt
+          sha256sum dist/Nextcloud-210.apk > dist/SHA256SUMS
+          rm -f "$RUNNER_TEMP/appserver210.p12"
+      - name: Upload APK and verification
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: Nextcloud-210-APK
+          path: dist/
+          retention-days: 30
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: Appserver210-test-results
+          path: app/build/test-results/
+          if-no-files-found: ignore

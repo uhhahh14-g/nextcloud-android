@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+  ~ SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<resources>
+    <string name="app_name" translatable="false">Nextcloud 210</string>
+    <string name="account_type" translatable="false">kr.appserver210.nextcloud</string>
+    <string name="authority" translatable="false">kr.appserver210.nextcloud.provider</string>
+    <string name="users_and_groups_search_authority" translatable="false">kr.appserver210.nextcloud.users</string>
+    <string name="users_and_groups_share_with" translatable="false">kr.appserver210.nextcloud.SHARE_WITH</string>
+    <string name="document_provider_authority" translatable="false">kr.appserver210.nextcloud.documents</string>
+    <string name="file_provider_authority" translatable="false">kr.appserver210.nextcloud.files</string>
+    <string name="image_cache_provider_authority" translatable="false">kr.appserver210.nextcloud.imagecache</string>
+    <string name="data_folder" translatable="false">nextcloud210</string>
+    <string name="webview_login_url" translatable="false">https://nextcloud.01084949031.kr/index.php/login/v2</string>
+    <bool name="show_server_url_input">false</bool>
+    <bool name="show_provider_or_own_installation">false</bool>
+    <bool name="disable_intro">true</bool>
+    <bool name="show_whats_new">false</bool>
+    <bool name="participate_enabled">false</bool>
+    <string name="sourcecode_url" translatable="false">https://github.com/uhhahh14-g/nextcloud-android/tree/appserver210</string>
+    <bool name="dev_version_direct_download_enabled">false</bool>
+</resources>

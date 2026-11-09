@@ -155,7 +155,8 @@ android {
         productFlavors {
             // used for f-droid
             register("generic") {
-                applicationId = "com.nextcloud.client"
+                applicationId = "kr.appserver210.nextcloud"
+                versionNameSuffix = "-appserver210.1"
                 dimension = "default"
             }
 

@@ -598,6 +598,9 @@ public abstract class DrawerActivity extends ToolbarActivity
     // region navigation item click
     private void onNavigationItemClicked(final MenuItem menuItem) {
         int itemId = menuItem.getItemId();
+        if (com.nextcloud.client.appserver.AppServerNavigation.open(this, itemId)) {
+            return;
+        }
 
         if (itemId == R.id.nav_all_files || itemId == R.id.nav_personal_files) {
             closeDrawer();
