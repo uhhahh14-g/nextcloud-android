@@ -8,8 +8,8 @@ package com.nextcloud.client.appserver
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
-import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import com.owncloud.android.R
 import com.owncloud.android.utils.DisplayUtils
 
@@ -28,7 +28,7 @@ object AppServerNavigation {
             CustomTabsIntent.Builder()
                 .setShowTitle(true)
                 .build()
-                .launchUrl(activity, Uri.parse(destination.uri.toString()))
+                .launchUrl(activity, destination.uri.toString().toUri())
         } catch (_: ActivityNotFoundException) {
             DisplayUtils.showSnackMessage(activity, R.string.authenticator_activity_no_web_browser_found)
         }
