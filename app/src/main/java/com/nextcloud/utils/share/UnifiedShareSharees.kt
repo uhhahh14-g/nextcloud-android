@@ -75,10 +75,10 @@ object UnifiedShareSharees {
         unifiedShareSupport[accountName]?.let { return it }
 
         // a failed capability request stays uncached so that the next listing can resolve it again
-        val supported = runCatching { credentials.supportsUnifiedShare() }.getOrNull() ?: return false
-        unifiedShareSupport[accountName] = supported
+        val supported = runCatching { credentials.supportsUnifiedShare() }.getOrNull()
+        if (supported != null) unifiedShareSupport[accountName] = supported
 
-        return supported
+        return supported ?: false
     }
 
     private suspend fun ShareAvatarRepository.fetchSharees(file: OCFile) {

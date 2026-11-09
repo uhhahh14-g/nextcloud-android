@@ -7,6 +7,7 @@
 package com.nextcloud.client.appserver
 
 import android.content.Context
+import androidx.core.content.edit
 import java.net.URI
 import java.util.UUID
 
@@ -14,15 +15,18 @@ class DailyBiblePushState(context: Context) {
     private val preferences = context.getSharedPreferences("daily-bible-push", Context.MODE_PRIVATE)
     val device: String
         get() = preferences.getString("device", null) ?: UUID.randomUUID().toString().also {
-            preferences.edit().putString("device", it).commit()
+            preferences.edit(commit = true) { putString("device", it) }
         }
 
     var endpoint: String
         get() = preferences.getString("endpoint", "").orEmpty()
-        set(value) { preferences.edit().putString("endpoint", value).apply() }
+        set(value) { preferences.edit { putString("endpoint", value) } }
 
     fun recordStatus(status: String) {
-        preferences.edit().putString("status", status).putLong("updated_at", System.currentTimeMillis()).apply()
+        preferences.edit {
+            putString("status", status)
+            putLong("updated_at", System.currentTimeMillis())
+        }
     }
 
     companion object {

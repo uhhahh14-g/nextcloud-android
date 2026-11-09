@@ -63,3 +63,12 @@ jobs:
           name: Appserver210-test-results
           path: app/build/test-results/
           if-no-files-found: ignore
+      - name: Upload quality reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: Appserver210-quality-reports
+          path: |
+            app/build/reports/
+            dist/formatting.patch
+          if-no-files-found: ignore

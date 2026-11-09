@@ -15,6 +15,7 @@ import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.FileNotFoundException
+import java.io.InputStream
 import java.net.URI
 
 class DailyBibleApi(private val client: OwnCloudClient, server: URI) {
@@ -58,25 +59,30 @@ class DailyBibleApi(private val client: OwnCloudClient, server: URI) {
         method.setRequestHeader("Accept", "application/json")
         method.followRedirects = false
         try {
-            val status = client.executeMethod(method)
-            if (status == HTTP_FORBIDDEN || status == HTTP_NOT_FOUND) throw FileNotFoundException("daily_not_shared")
-            if (status != HTTP_OK) throw IOException("daily_api_unavailable")
-            val output = ByteArrayOutputStream()
-            method.responseBodyAsStream.use { stream ->
-                val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-                var count = stream.read(buffer)
-                while (count >= 0) {
-                    if (output.size().toLong() + count > DailyAudioManifest.MAX_BYTES) {
-                        throw IOException("daily_audio_too_large")
-                    }
-                    output.write(buffer, 0, count)
-                    count = stream.read(buffer)
-                }
-            }
-            return output.toByteArray()
+            requireSuccess(client.executeMethod(method))
+            return method.responseBodyAsStream.use(::readBounded)
         } finally {
             method.releaseConnection()
         }
+    }
+
+    private fun requireSuccess(status: Int) {
+        if (status == HTTP_FORBIDDEN || status == HTTP_NOT_FOUND) throw FileNotFoundException("daily_not_shared")
+        if (status != HTTP_OK) throw IOException("daily_api_unavailable")
+    }
+
+    private fun readBounded(stream: InputStream): ByteArray {
+        val output = ByteArrayOutputStream()
+        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+        var count = stream.read(buffer)
+        while (count >= 0) {
+            if (output.size().toLong() + count > DailyAudioManifest.MAX_BYTES) {
+                throw IOException("daily_audio_too_large")
+            }
+            output.write(buffer, 0, count)
+            count = stream.read(buffer)
+        }
+        return output.toByteArray()
     }
 
     companion object {
