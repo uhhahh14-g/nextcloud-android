@@ -22,7 +22,7 @@ jobs:
           java-version: 21
       - name: Install Android build tools
         run: |
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37" "build-tools;37.0.0" "ndk;29.0.14206865" "cmake;4.1.2"
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" "build-tools;37.0.0" "ndk;29.0.14206865" "cmake;4.1.2"
       - name: Build and test
         run: |
           chmod +x gradlew
