@@ -5,6 +5,7 @@ import pathlib
 import re
 import subprocess
 import time
+import xml.etree.ElementTree as ET
 
 package = 'kr.appserver210.nextcloud'
 output = pathlib.Path('smoke-results')
@@ -32,9 +33,25 @@ try:
     (output / 'crash-log.txt').write_text(log)
     record('App starts without a fatal crash', not re.search(r'Process: ' + re.escape(package) + r'(?:,|\s|$)', log))
     record('Native app process remains running', bool(adb('shell', 'pidof', package).stdout.strip()))
-    adb('shell', 'uiautomator', 'dump', '/sdcard/window.xml', check=False)
-    xml = adb('shell', 'cat', '/sdcard/window.xml', check=False).stdout
-    record('Existing Nextcloud login opens', 'Nextcloud' in xml or 'nextcloud.01084949031.kr' in xml)
+    # A fresh emulator has not completed Chrome's first-run flow yet.
+    for attempt in range(15):
+        adb('shell', 'uiautomator', 'dump', '/sdcard/window.xml', check=False)
+        xml = adb('shell', 'cat', '/sdcard/window.xml', check=False).stdout
+        (output / 'login-screen.xml').write_text(xml)
+        if 'nextcloud.01084949031.kr' in xml:
+            break
+        try:
+            nodes = ET.fromstring(xml).iter('node')
+            for node in nodes:
+                if node.get('text', '') in ('Use without an account', 'No thanks', 'Accept & continue', 'Got it'):
+                    bounds = [int(n) for n in re.findall(r'\d+', node.get('bounds', ''))]
+                    if len(bounds) == 4:
+                        adb('shell', 'input', 'tap', str((bounds[0] + bounds[2]) // 2), str((bounds[1] + bounds[3]) // 2))
+                        break
+        except ET.ParseError:
+            pass
+        time.sleep(4)
+    record('Existing Nextcloud login opens', 'nextcloud.01084949031.kr' in xml and ('Log in' in xml or '로그인' in xml or 'Nextcloud' in xml))
     screenshot = subprocess.run(['adb', 'exec-out', 'screencap', '-p'], capture_output=True, check=True)
     (output / 'login-screen.png').write_bytes(screenshot.stdout)
 finally:
