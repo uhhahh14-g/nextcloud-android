@@ -45,6 +45,8 @@ class DailyAudioManifestTest {
             "https://user@ntfy.01084949031.kr" + topic,
             "https://ntfy.01084949031.kr" + topic + "?redirect=1",
             "https://ntfy.01084949031.kr/short"
-        )) assertFalse(DailyBiblePushState.validEndpoint(url))
+        )) {
+            assertFalse(DailyBiblePushState.validEndpoint(url))
+        }
     }
 }
