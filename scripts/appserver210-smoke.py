@@ -38,6 +38,14 @@ try:
         adb('shell', 'uiautomator', 'dump', '/sdcard/window.xml', check=False)
         xml = adb('shell', 'cat', '/sdcard/window.xml', check=False).stdout
         (output / 'login-screen.xml').write_text(xml)
+        if "Pixel Launcher isn't responding" in xml:
+            for node in ET.fromstring(xml).iter('node'):
+                if node.get('resource-id') == 'android:id/aerr_close':
+                    bounds = [int(n) for n in re.findall(r'\d+', node.get('bounds', ''))]
+                    adb('shell', 'input', 'tap', str((bounds[0] + bounds[2]) // 2), str((bounds[1] + bounds[3]) // 2))
+                    adb('shell', 'am', 'start', '-W', '-n', package + '/com.nmc.android.ui.LauncherActivity')
+                    break
+            continue
         if attempt in (0, 3, 10, 29):
             frame = subprocess.run(['adb', 'exec-out', 'screencap', '-p'], capture_output=True)
             (output / ('login-step-' + str(attempt) + '.png')).write_bytes(frame.stdout)
