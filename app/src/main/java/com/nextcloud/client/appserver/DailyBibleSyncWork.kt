@@ -83,7 +83,10 @@ class DailyBibleSyncWork(
         check(parent.isDirectory || parent.mkdirs())
         val temporary = File.createTempFile(".daily-bible-", ".mp3", parent)
         try {
-            temporary.outputStream().use { it.write(content); it.fd.sync() }
+            temporary.outputStream().use {
+                it.write(content)
+                it.fd.sync()
+            }
             Files.move(temporary.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING)
         } finally {
             temporary.delete()

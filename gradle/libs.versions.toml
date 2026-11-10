@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 [versions]
+unifiedPushConnectorVersion = "3.0.10"
+tinkVersion = "1.18.0"
 androidCommonLibraryVersion = "0.34.0"
 androidGifDrawableVersion = "1.2.32"
 androidImageCropperVersion = "4.7.0"
@@ -90,6 +92,8 @@ kotlinxCoroutinesTestVersion = "1.11.0"
 kotlinxCoroutinesVersion = "1.11.0"
 
 [libraries]
+unifiedpush-connector = { module = "org.unifiedpush.android:connector", version.ref = "unifiedPushConnectorVersion" }
+tink = { module = "com.google.crypto.tink:tink", version.ref = "tinkVersion" }
 # Crypto
 android-library = { module = "com.github.nextcloud:android-library", version.ref = "androidLibraryVersion" }
 android-openssl = { module = "com.github.nextcloud-releases:android-openssl", version.ref = "androidOpensslVersion" }

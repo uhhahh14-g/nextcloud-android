@@ -537,8 +537,8 @@ dependencies {
 
     // region Google Play dependencies, upon each update first test: new registration, receive push
     add(gplayImplementationConfiguration, libs.bundles.gplay)
-    implementation("org.unifiedpush.android:connector:3.0.10")
-    implementation("com.google.crypto.tink:tink:1.18.0")
+    implementation(libs.unifiedpush.connector)
+    implementation(libs.tink)
     // endregion
 
     // region common

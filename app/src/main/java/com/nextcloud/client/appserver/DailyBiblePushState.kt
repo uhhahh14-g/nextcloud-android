@@ -20,7 +20,9 @@ class DailyBiblePushState(context: Context) {
 
     var endpoint: String
         get() = preferences.getString("endpoint", "").orEmpty()
-        set(value) { preferences.edit { putString("endpoint", value) } }
+        set(value) {
+            preferences.edit { putString("endpoint", value) }
+        }
 
     fun recordStatus(status: String) {
         preferences.edit {
